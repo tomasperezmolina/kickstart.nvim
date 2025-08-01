@@ -100,9 +100,10 @@ vim.g.have_nerd_font = false
 
 -- Make line numbers default
 vim.o.number = true
+
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.o.relativenumber = true
+vim.o.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
@@ -1010,11 +1011,27 @@ vim.keymap.set('n', '<leader>ot', function()
   vim.cmd.term()
   vim.cmd.wincmd 'J'
   vim.api.nvim_win_set_height(0, 15)
+  -- Enter insert mode to be able to start typing immediately
+  vim.cmd.startinsert()
 end, { desc = '[O]pen [T]erminal' })
+
+-- Open small terminal at the bottom of the window within the working directory of the current buffer
+vim.keymap.set('n', '<leader>oh', function()
+  local path = vim.fn.expand '%:p:h'
+  vim.cmd.vnew()
+  vim.cmd.lcd(path)
+  vim.cmd.term()
+  vim.cmd.wincmd 'J'
+  vim.api.nvim_win_set_height(0, 15)
+  -- Enter insert mode to be able to start typing immediately
+  vim.cmd.startinsert()
+end, { desc = '[O]pen Terminal [H]ere' })
 
 -- Execute highlighted lua
 vim.keymap.set('v', '<leader>x', function()
   vim.cmd "'<,'>lua"
+  -- Exit back to normal mode so it acts similar to other visual mode actions
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<esc>', true, false, true), 'x', true)
 end, { desc = 'E[x]ecute highlighted lua code' })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
